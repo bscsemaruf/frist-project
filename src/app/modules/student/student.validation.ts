@@ -30,28 +30,30 @@ const localGuardianValidationSchema = z.object({
 });
 
 export const studentValidationSchema = z.object({
-  student: z.object({
-    name: userNameValidationSchema,
-    gender: z.enum(['male', 'female', 'other'], {
-      required_error: 'Gender is required',
+  body: z.object({
+    student: z.object({
+      name: userNameValidationSchema,
+      gender: z.enum(['male', 'female', 'other'], {
+        required_error: 'Gender is required',
+      }),
+      dateOfBirth: z.date().optional(),
+      email: z
+        .string()
+        .email('Invalid email format')
+        .nonempty('Email is required'),
+      contactNo: z.string().nonempty('Contact number is required'),
+      emergencyContactNo: z
+        .string()
+        .nonempty('Emergency contact number is required'),
+      bloodGroup: z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'], {
+        required_error: 'Blood group is required',
+      }),
+      presentAddress: z.string().nonempty('Present address is required'),
+      permanentAddress: z.string().nonempty('Permanent address is required'),
+      guardian: guardianValidationSchema,
+      localGuardian: localGuardianValidationSchema,
+      profileImg: z.string().optional(),
     }),
-    dateOfBirth: z.string().nonempty('Date of birth is required'),
-    email: z
-      .string()
-      .email('Invalid email format')
-      .nonempty('Email is required'),
-    contactNo: z.string().nonempty('Contact number is required'),
-    emergencyContactNo: z
-      .string()
-      .nonempty('Emergency contact number is required'),
-    bloodGroup: z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'], {
-      required_error: 'Blood group is required',
-    }),
-    presentAddress: z.string().nonempty('Present address is required'),
-    permanentAddress: z.string().nonempty('Permanent address is required'),
-    guardian: guardianValidationSchema,
-    localGuardian: localGuardianValidationSchema,
-    profileImg: z.string().optional(),
   }),
 });
 
