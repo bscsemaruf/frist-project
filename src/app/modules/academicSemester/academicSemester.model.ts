@@ -6,7 +6,7 @@ import {
   Months,
 } from './academicSemester.constant';
 
-const AcademicSemesterSchema = new Schema<TAcademicSemester>(
+const academicSemesterSchema = new Schema<TAcademicSemester>(
   {
     name: {
       type: String,
@@ -38,7 +38,18 @@ const AcademicSemesterSchema = new Schema<TAcademicSemester>(
   },
 );
 
+academicSemesterSchema.pre('save', async function (next) {
+  const isSemesterIsExists = {
+    name: this.name,
+    year: this.year,
+  };
+  if (await AcademicSemester.findOne(isSemesterIsExists)) {
+    throw new Error('Semester is already exist');
+  }
+  next();
+});
+
 export const AcademicSemester = model<TAcademicSemester>(
   'AcademicSemester',
-  AcademicSemesterSchema,
+  academicSemesterSchema,
 );

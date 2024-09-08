@@ -6,7 +6,6 @@ import {
   StudentModel,
   TUserName,
 } from './student.interface';
-import { date } from 'zod';
 
 const userNameSchema = new Schema<TUserName>({
   firstName: {
@@ -82,6 +81,7 @@ const studentSchema = new Schema<TStudent, StudentModel>(
     },
     user: {
       type: Schema.Types.ObjectId,
+      ref: 'User',
     },
 
     name: {
@@ -97,7 +97,7 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       required: [true, 'Gender is required'],
     },
     dateOfBirth: {
-      type: Date,
+      type: String,
       required: [true, 'Date of birth is required'],
     },
     email: {
@@ -133,8 +133,13 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       type: localGuardianSchema,
       required: [true, 'Local guardian information is required'],
     },
+
     profileImg: {
       type: String,
+    },
+    admissionSemester: {
+      type: Schema.Types.ObjectId,
+      ref: 'AcademicSemester',
     },
 
     isDeleted: {
