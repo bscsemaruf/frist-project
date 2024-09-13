@@ -98,7 +98,6 @@ const studentSchema = new Schema<TStudent, StudentModel>(
     },
     dateOfBirth: {
       type: String,
-      required: [true, 'Date of birth is required'],
     },
     email: {
       type: String,
@@ -115,7 +114,6 @@ const studentSchema = new Schema<TStudent, StudentModel>(
     bloodGroup: {
       type: String,
       enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
-      required: [true, 'Blood group is required'],
     },
     presentAddress: {
       type: String,
@@ -151,26 +149,26 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       default: false,
     },
   },
-  {
-    toJSON: {
-      virtuals: true,
-    },
-  },
+  // {
+  //   toJSON: {
+  //     virtuals: true,
+  //   },
+  // },
 );
 
 // virtual
-studentSchema.virtual('FullName').get(function () {
-  return `${this.name.firstName} ${this.name.middleName} ${this.name.lastName}`;
-});
+// studentSchema.virtual('FullName').get(function () {
+//   return `${this.name.firstName} ${this.name.middleName} ${this.name.lastName}`;
+// });
 
 // query middleware
 studentSchema.pre('find', function (next) {
-  this.find({ isDeleted: { $ne: true } });
+  this.where({ isDeleted: { $ne: true } });
   next();
 });
 
 studentSchema.pre('findOne', function (next) {
-  this.findOne({ isDeleted: { $ne: true } });
+  this.where({ isDeleted: { $ne: true } });
   next();
 });
 
