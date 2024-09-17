@@ -1,8 +1,6 @@
 import { Types } from 'mongoose';
 import { TGuardian, TLocalGuardian, TUserName } from '../../interface/userInfo';
 
-
-
 export type TFaculty = {
   id: string;
   user: Types.ObjectId;

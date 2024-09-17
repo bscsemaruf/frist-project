@@ -56,10 +56,42 @@ const deleteCourse = catchAsync(async (req, res) => {
   });
 });
 
+const assignFacultiesToCourse = catchAsync(async (req, res) => {
+  const { courseId } = req.params;
+
+  const result = await CourseServices.assignFacultiesToCourseIntoDB(
+    courseId,
+    req.body,
+  );
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Assign faculties to course successfullly',
+    data: result,
+  });
+});
+
+const removeFacultiesFromCourse = catchAsync(async (req, res) => {
+  const { courseId } = req.params;
+
+  const result = await CourseServices.removeFacultiesFromCourseFromDB(
+    courseId,
+    req.body,
+  );
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Remove faculties from course successfullly',
+    data: result,
+  });
+});
+
 export const CourseControllers = {
   createCourse,
   getSingleCourse,
   getAllCourses,
   updateCourse,
   deleteCourse,
+  assignFacultiesToCourse,
+  removeFacultiesFromCourse,
 };

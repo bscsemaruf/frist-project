@@ -68,100 +68,82 @@ const localGuardianSchema = new Schema<TLocalGuardian>({
   },
 });
 
-const facultySchema = new Schema<TFaculty>({
-  id: {
-    type: String,
-    required: [true, 'Student ID is required'],
-    unique: true,
-  },
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-  },
-
-  name: {
-    type: userNameSchema,
-    required: [true, 'Student name is required'],
-  },
-  gender: {
-    type: String,
-    enum: {
-      values: ['male', 'female', 'other'],
-      message: '{VALUE} is not a valid gender',
+const facultySchema = new Schema<TFaculty>(
+  {
+    id: {
+      type: String,
+      required: [true, 'Student ID is required'],
+      unique: true,
     },
-    required: [true, 'Gender is required'],
-  },
-  dateOfBirth: {
-    type: String,
-  },
-  email: {
-    type: String,
-    required: [true, 'Email is required'],
-  },
-  contactNo: {
-    type: String,
-    required: [true, 'Contact number is required'],
-  },
-  emergencyContactNo: {
-    type: String,
-    required: [true, 'Emergency contact number is required'],
-  },
-  bloodGroup: {
-    type: String,
-    enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
-  },
-  presentAddress: {
-    type: String,
-    required: [true, 'Present address is required'],
-  },
-  permanentAddress: {
-    type: String,
-    required: [true, 'Permanent address is required'],
-  },
-  guardian: {
-    type: guardianSchema,
-    required: [true, 'Guardian information is required'],
-  },
-  localGuardian: {
-    type: localGuardianSchema,
-    required: [true, 'Local guardian information is required'],
-  },
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    },
 
-  profileImg: {
-    type: String,
+    name: {
+      type: userNameSchema,
+      required: [true, 'Student name is required'],
+    },
+    gender: {
+      type: String,
+      enum: {
+        values: ['male', 'female', 'other'],
+        message: '{VALUE} is not a valid gender',
+      },
+      required: [true, 'Gender is required'],
+    },
+    dateOfBirth: {
+      type: String,
+    },
+    email: {
+      type: String,
+      required: [true, 'Email is required'],
+    },
+    contactNo: {
+      type: String,
+      required: [true, 'Contact number is required'],
+    },
+    emergencyContactNo: {
+      type: String,
+      required: [true, 'Emergency contact number is required'],
+    },
+    bloodGroup: {
+      type: String,
+      enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
+    },
+    presentAddress: {
+      type: String,
+      required: [true, 'Present address is required'],
+    },
+    permanentAddress: {
+      type: String,
+      required: [true, 'Permanent address is required'],
+    },
+    guardian: {
+      type: guardianSchema,
+      required: [true, 'Guardian information is required'],
+    },
+    localGuardian: {
+      type: localGuardianSchema,
+      required: [true, 'Local guardian information is required'],
+    },
+    academicDepartment: {
+      type: Schema.Types.ObjectId,
+      ref: 'AcademicDepartment',
+    },
+    profileImg: {
+      type: String,
+    },
+
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
-
-  academicDepartment: {
-    type: Schema.Types.ObjectId,
-    ref: 'AcademicDepartment',
+  {
+    timestamps: true,
   },
-
-  isDeleted: {
-    type: Boolean,
-    default: false,
-  },
-});
-
-// query middleware
-facultySchema.pre('find', function (next) {
-  this.where({ isDeleted: { $ne: true } });
-  next();
-});
-
-facultySchema.pre('findOne', function (next) {
-  this.where({ isDeleted: { $ne: true } });
-  next();
-});
-
-facultySchema.pre('aggregate', function (next) {
-  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
-  next();
-});
-// creating custom static methods
-facultySchema.statics.isUserExists = async function (id: string) {
-  const result = await Student.findOne({ id });
-  return result;
-};
+);
 
 // create a model
-export const Student = model<TStudent, StudentModel>('Student', studentSchema);
+export const Faculty = model<TFaculty>('Faculty', facultySchema);
