@@ -30,7 +30,7 @@ const getSingleAcademicFaculty = catchAsync(async (req, res) => {
 
 const getAllAcademicFaculty = catchAsync(async (req, res) => {
   const result = await AcademicFacultyServices.getAllAcademicFacultyFromDB();
-
+  console.log(req.user);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

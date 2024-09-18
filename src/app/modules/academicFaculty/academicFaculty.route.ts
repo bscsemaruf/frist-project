@@ -2,6 +2,7 @@ import express from 'express';
 import validateRequest from '../../utils/validateRequest';
 import { AcademicFacultyValidation } from './academicFaculty.validation';
 import { AcademicFacultyControllers } from './academicFaculty.controller';
+import authValidate from '../../middlewares/auth';
 
 const router = express.Router();
 
@@ -19,7 +20,7 @@ router.get(
 );
 router.get(
   '/',
-
+  authValidate(),
   AcademicFacultyControllers.getAllAcademicFaculty,
 );
 router.patch(

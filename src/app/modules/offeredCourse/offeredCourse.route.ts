@@ -11,4 +11,10 @@ router.post(
   OfferedCourseControllers.createOfferedCourse,
 );
 
+router.delete(
+  '/:id',
+  validateRequest(OfferedCourseValidations.updateOfferedCourseValidationSchema),
+  OfferedCourseControllers.deleteOfferedCourse,
+);
+
 export const OfferedCourseRoutes = router;

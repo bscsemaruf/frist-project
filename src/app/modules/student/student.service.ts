@@ -87,6 +87,7 @@ const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
 
   const studentQuery = new QueryBuilder(
     Student.find()
+      .populate('user')
       .populate('admissionSemester')
       .populate({
         path: 'academicDepartment',
@@ -101,8 +102,6 @@ const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
     .sort()
     .paginate()
     .fields();
-
-  console.log({ query }, typeof query);
   // if (Object.keys(query).length === 0) {
   //   const result = await Student.find();
   //   return result;

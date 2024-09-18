@@ -1,11 +1,6 @@
 import { model, Schema } from 'mongoose';
-import {
-  TGuardian,
-  TLocalGuardian,
-  TStudent,
-  StudentModel,
-  TUserName,
-} from './student.interface';
+import { TStudent, StudentModel } from './student.interface';
+import { TGuardian, TLocalGuardian, TUserName } from '../../interface/userInfo';
 
 const userNameSchema = new Schema<TUserName>({
   firstName: {
@@ -82,6 +77,7 @@ const studentSchema = new Schema<TStudent, StudentModel>(
     user: {
       type: Schema.Types.ObjectId,
       ref: 'User',
+      required: false,
     },
 
     name: {

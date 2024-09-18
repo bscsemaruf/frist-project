@@ -42,6 +42,7 @@ export const createFacultyValidationSchema = z.object({
         .email('Invalid email format')
         .nonempty('Email is required'),
       contactNo: z.string().nonempty('Contact number is required'),
+      designation: z.string({ required_error: 'Designation is required' }),
       emergencyContactNo: z
         .string()
         .nonempty('Emergency contact number is required'),
@@ -124,6 +125,9 @@ export const updateCreateFacultyValidationSchema = z.object({
         .nonempty('Email is required')
         .optional(),
       contactNo: z.string().nonempty('Contact number is required').optional(),
+      designation: z
+        .string({ required_error: 'Designation is required' })
+        .optional(),
       emergencyContactNo: z
         .string()
         .nonempty('Emergency contact number is required')

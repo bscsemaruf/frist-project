@@ -19,6 +19,7 @@ const getSingleFacultyFromDB = async (id: string) => {
     });
   return result;
 };
+
 const getAllFacultiesFromDB = async (query: Record<string, unknown>) => {
   const facultyQuery = new QueryBuilder(
     Faculty.find()
@@ -40,6 +41,7 @@ const getAllFacultiesFromDB = async (query: Record<string, unknown>) => {
 
   return result;
 };
+
 const deleteFacucltyIntoDB = async (id: string) => {
   //   const existUser = await Faculty.isUserExists(id);
 

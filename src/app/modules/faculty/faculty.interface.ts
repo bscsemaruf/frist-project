@@ -9,6 +9,7 @@ export type TFaculty = {
   dateOfBirth?: string;
   email: string;
   contactNo: string;
+  designation: string;
   emergencyContactNo: string;
   bloodGroup?: 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-';
   presentAddress: string;

@@ -103,6 +103,10 @@ const facultySchema = new Schema<TFaculty>(
       type: String,
       required: [true, 'Contact number is required'],
     },
+    designation: {
+      type: String,
+      required: [true, 'Designation is required'],
+    },
     emergencyContactNo: {
       type: String,
       required: [true, 'Emergency contact number is required'],
