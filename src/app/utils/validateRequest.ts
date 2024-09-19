@@ -6,6 +6,7 @@ const validateRequest = (scheam: AnyZodObject) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     await scheam.parseAsync({
       body: req.body,
+      cookies: req.cookies,
     });
     return next();
   });

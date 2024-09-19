@@ -12,11 +12,14 @@ import httpStatus, { UNAVAILABLE_FOR_LEGAL_REASONS } from 'http-status';
 import { Faculty } from '../faculty/faculty.model';
 import { TFaculty } from '../faculty/faculty.interface';
 import { unknown } from 'zod';
+import { verifyToken } from '../Auth/auth.utils';
 
 const createStudentIntoDB = async (password: string, studentData: TStudent) => {
   const user: Partial<TUser> = {};
   user.password = password || (config.default_pass as string);
-
+  //  create a custom  role
+  user.role = 'student';
+  user.email = studentData.email;
   const getLastStudent = async () => {
     const lastStudentId = await User.findOne(
       {
@@ -66,8 +69,6 @@ const createStudentIntoDB = async (password: string, studentData: TStudent) => {
     session.startTransaction();
     //   create a custom id
     user.id = await generatedStudentId(admissionSemester);
-    //  create a custom  role
-    user.role = 'student';
 
     // create a user
     const newUser = await User.create([user], { session }); //transaction - 1
@@ -95,7 +96,8 @@ const createFacultyIntoDB = async (password: string, payload: TFaculty) => {
   const user: Partial<TUser> = {};
 
   user.password = password || config.default_pass;
-
+  user.role = 'faculty';
+  user.email = payload.email;
   const getLastFacultyId = async () => {
     const lastFacultyID = await User.findOne(
       { role: 'faculty' },
@@ -138,7 +140,36 @@ const createFacultyIntoDB = async (password: string, payload: TFaculty) => {
   return result;
 };
 
+const getMe = async (userId: string, role: string) => {
+  let result = null;
+  if (role === 'student') {
+    result = await Student.findOne({ id: userId });
+  }
+
+  if (role === 'faculty') {
+    result = await Faculty.findOne({ id: userId });
+  }
+  // if (role === 'admin') {
+  //   result = await Admin.findOne({ id: userId });
+  // }
+  return result;
+};
+
+const changeStatus = async (id: string, payload: { status: string }) => {
+  const { status } = payload;
+  const isUserExists = await User.findById(id);
+  if (!isUserExists) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User is not found');
+  }
+
+  const result = await User.findByIdAndUpdate(id, { status }, { new: true });
+
+  return result;
+};
+
 export const UserServices = {
   createStudentIntoDB,
   createFacultyIntoDB,
+  getMe,
+  changeStatus,
 };

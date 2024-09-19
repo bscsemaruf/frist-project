@@ -11,3 +11,5 @@ export const USER_ROLE = {
 // };
 
 export type TUser_role = keyof typeof USER_ROLE;
+
+export const Status = ['in-progress', 'blocked'];
