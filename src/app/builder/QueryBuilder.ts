@@ -50,6 +50,15 @@ class QueryBuilder<T> {
     this.modelQuery = this.modelQuery.select(fields);
     return this;
   }
+
+  async countTotal() {
+    const totalQuiries = this.modelQuery.getFilter();
+    const total = await this.modelQuery.model.countDocuments(totalQuiries);
+    const page = Number(this?.query?.page) || 1;
+    const limit = Number(this?.query?.limit) || 10;
+    const totalPage = Math.ceil(total / limit);
+    return { page, limit, totalPage, total };
+  }
 }
 
 export default QueryBuilder;

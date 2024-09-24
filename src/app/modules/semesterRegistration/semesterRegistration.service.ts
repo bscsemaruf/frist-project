@@ -112,7 +112,9 @@ const updateSemesterRegistrationIntoDB = async (
     );
   }
 
-  const result = await SemesterRegistration.findById(id);
+  const result = await SemesterRegistration.findByIdAndUpdate(id, payload, {
+    new: true,
+  });
   return result;
 };
 

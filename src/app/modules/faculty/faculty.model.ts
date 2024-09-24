@@ -135,8 +135,13 @@ const facultySchema = new Schema<TFaculty>(
       type: Schema.Types.ObjectId,
       ref: 'AcademicDepartment',
     },
+    academicFaculty: {
+      type: Schema.Types.ObjectId,
+      ref: 'AcademicFaculty',
+    },
     profileImg: {
       type: String,
+      default: '',
     },
 
     isDeleted: {

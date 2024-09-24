@@ -17,7 +17,7 @@ const getSingleStudent = catchAsync(async (req, res) => {
 
 const getAllStudents = catchAsync(async (req, res) => {
   const result = await StudentServices.getAllStudentsFromDB(req.query);
-  console.log('cookies', req.cookies);
+
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

@@ -102,12 +102,9 @@ const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
     .sort()
     .paginate()
     .fields();
-  // if (Object.keys(query).length === 0) {
-  //   const result = await Student.find();
-  //   return result;
-  // }
   const result = await studentQuery.modelQuery;
-  return result;
+  const meta = await studentQuery.countTotal();
+  return { meta, result };
 };
 
 const updateStudentIntoDB = async (id: string, payload: Partial<TStudent>) => {

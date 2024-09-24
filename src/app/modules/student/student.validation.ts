@@ -4,12 +4,7 @@ const createUserNameValidationSchema = z.object({
   firstName: z
     .string()
     .trim()
-    .max(20, 'First name should be within 20 characters')
-    .regex(
-      /^[A-Z][a-z]*$/,
-      'First name must be capitalized and contain only letters',
-    )
-    .nonempty('First name is required'),
+    .max(20, 'First name should be within 20 characters'),
   middleName: z.string().optional(),
   lastName: z.string().nonempty('Last name is required'),
 });
@@ -55,7 +50,6 @@ export const createStudentValidationSchema = z.object({
       localGuardian: createLocalGuardianValidationSchema,
       admissionSemester: z.string(),
       academicDepartment: z.string(),
-      profileImg: z.string().optional(),
     }),
   }),
 });

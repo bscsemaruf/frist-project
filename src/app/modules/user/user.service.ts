@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import mongoose from 'mongoose';
 import config from '../../config';
@@ -8,13 +9,17 @@ import { Student } from '../student/student.model';
 import { TUser } from './user.interface';
 import { User } from './user.model';
 import AppError from '../../errors/AppError';
-import httpStatus, { UNAVAILABLE_FOR_LEGAL_REASONS } from 'http-status';
+import httpStatus from 'http-status';
 import { Faculty } from '../faculty/faculty.model';
 import { TFaculty } from '../faculty/faculty.interface';
-import { unknown } from 'zod';
-import { verifyToken } from '../Auth/auth.utils';
+import { sendImageToCloudinary } from '../../utils/sendImageToCloudinary';
+import { AcademicDepartment } from '../academicDepartment/academicDepartment.model';
 
-const createStudentIntoDB = async (password: string, studentData: TStudent) => {
+const createStudentIntoDB = async (
+  file: any,
+  password: string,
+  studentData: TStudent,
+) => {
   const user: Partial<TUser> = {};
   user.password = password || (config.default_pass as string);
   //  create a custom  role
@@ -61,6 +66,21 @@ const createStudentIntoDB = async (password: string, studentData: TStudent) => {
   const admissionSemester = await AcademicSemester.findById(
     studentData.admissionSemester,
   );
+  if (!admissionSemester) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Admission Semester is not found');
+  }
+
+  const isAcademicDepartmentExists = await AcademicDepartment.findById(
+    studentData.academicDepartment,
+  );
+  if (!isAcademicDepartmentExists) {
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      'Academic Department is not found',
+    );
+  }
+
+  studentData.academicFaculty = isAcademicDepartmentExists?.academicFaculty;
 
   // transactions
   const session = await mongoose.startSession();
@@ -70,8 +90,16 @@ const createStudentIntoDB = async (password: string, studentData: TStudent) => {
     //   create a custom id
     user.id = await generatedStudentId(admissionSemester);
 
+    if (file) {
+      const imageName = `${user.id} ${studentData.name.firstName}`;
+      const path = file.path;
+      const { secure_url } = await sendImageToCloudinary(path, imageName);
+      studentData.profileImg = secure_url;
+    }
+
     // create a user
     const newUser = await User.create([user], { session }); //transaction - 1
+
     if (!newUser.length) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create user');
     }
@@ -85,14 +113,20 @@ const createStudentIntoDB = async (password: string, studentData: TStudent) => {
     }
     await session.commitTransaction();
     await session.endSession();
+
     return newStudent;
-  } catch (err) {
+  } catch (err: any) {
     await session.abortTransaction();
     await session.endSession();
+    throw new Error(err);
   }
 };
 
-const createFacultyIntoDB = async (password: string, payload: TFaculty) => {
+const createFacultyIntoDB = async (
+  file: any,
+  password: string,
+  payload: TFaculty,
+) => {
   const user: Partial<TUser> = {};
 
   user.password = password || config.default_pass;
@@ -125,6 +159,16 @@ const createFacultyIntoDB = async (password: string, payload: TFaculty) => {
     return currentId;
   };
 
+  const isAcademicDepartmentExists = await AcademicDepartment.findById(
+    payload.academicDepartment,
+  );
+  if (!isAcademicDepartmentExists) {
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      'Academic Department is not found',
+    );
+  }
+
   user.id = await generateFacultyId();
   user.role = 'faculty';
 
@@ -133,6 +177,14 @@ const createFacultyIntoDB = async (password: string, payload: TFaculty) => {
   if (Object.keys(createUser).length) {
     payload.id = createUser.id;
     payload.user = createUser._id;
+  }
+  payload.academicFaculty = isAcademicDepartmentExists.academicFaculty;
+
+  if (file) {
+    const imageName = `${user.id} ${payload.name.firstName}`;
+    const path = file.path;
+    const { secure_url } = await sendImageToCloudinary(path, imageName);
+    payload.profileImg = secure_url;
   }
 
   const result = await Faculty.create(payload);
